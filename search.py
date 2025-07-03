@@ -14,6 +14,11 @@ elif SEARCH_BACKEND == "scann":
 else:
     raise ValueError("Ge\u00e7ersiz SEARCH_BACKEND ayar\u0131.")
 
+from typing import List, Tuple
+import numpy as np
+import faiss
+
+
 
 class VectorSearch:
     def __init__(
@@ -25,6 +30,7 @@ class VectorSearch:
     ):
         os.makedirs(base_dir, exist_ok=True)
         subject_safe = subject.lower().replace(" ", "_")
+
         self.backend = SEARCH_BACKEND
         suffix = {"faiss": "index", "annoy": "ann", "scann": "npy"}.get(self.backend, "index")
         self.index_path = os.path.join(base_dir, f"{grade}_{subject_safe}.{suffix}")
@@ -92,6 +98,21 @@ class VectorSearch:
             return np.array(dist)[:top_k], np.array(idx)[:top_k]
         else:
             raise ValueError("Unsupported SEARCH_BACKEND")
+=======
+        self.index_path = os.path.join(base_dir, f"{grade}_{subject_safe}.index")
+        if os.path.exists(self.index_path):
+            self.index = faiss.read_index(self.index_path)
+        else:
+            self.index = faiss.IndexFlatL2(dim)
+
+    def add_embeddings(self, embeddings: np.ndarray):
+        self.index.add(embeddings)
+        faiss.write_index(self.index, self.index_path)
+
+    def search(self, query_vec: np.ndarray, top_k: int = 3) -> Tuple[np.ndarray, np.ndarray]:
+        distances, indices = self.index.search(query_vec.reshape(1, -1), top_k)
+        return distances[0], indices[0]
+
 
     def search_with_rerank(
         self,
@@ -100,6 +121,7 @@ class VectorSearch:
         top_k: int = 3,
         search_k: int = 10,
     ) -> Tuple[np.ndarray, np.ndarray]:
+
         """Search top ``search_k`` then re-rank by cosine similarity (FAISS only)."""
         if self.backend == "faiss":
             dist, idx = self.index.search(query_vec.reshape(1, -1), search_k)
@@ -111,3 +133,13 @@ class VectorSearch:
             return sims[order], idx[0][order]
         else:
             return self.search(query_vec, top_k)
+
+        """Search top ``search_k`` then re-rank by cosine similarity."""
+        dist, idx = self.index.search(query_vec.reshape(1, -1), search_k)
+        candidates = embeddings[idx[0]]
+        sims = np.dot(candidates, query_vec) / (
+            np.linalg.norm(candidates, axis=1) * np.linalg.norm(query_vec) + 1e-8
+        )
+        order = np.argsort(-sims)[:top_k]
+        return sims[order], idx[0][order]
+

@@ -8,3 +8,5 @@ gTTS
 openai-whisper
 annoy
 scann
+
+

@@ -12,6 +12,13 @@ class Embedder:
         """Load SentenceTransformer model. ``model_name`` can be changed if
         you want to try other embedding models."""
 
+        model_name: str = "paraphrase-multilingual-MiniLM-L12-v2",
+        cache_dir: str = None,
+    ):
+        """Load SentenceTransformer model.``model_name`` can be changed to
+        ``bert-base-turkish-cased`` for experimental Turkish embeddings."""
+       main
+
         self.model_name = model_name
         self.model = SentenceTransformer(model_name, cache_folder=cache_dir)
 
