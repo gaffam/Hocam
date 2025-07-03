@@ -17,6 +17,7 @@ for model in [
     "dbmdz/gpt2-turkish",
     "AI4Turk/ke-t5-small-tr",
     "cahya/gpt2-small-turkish",
+    "emrecan/bert-base-turkish-cased-uncased-nli-stsb-tr",
     "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
 ]:
     AutoTokenizer.from_pretrained(model)
@@ -51,4 +52,4 @@ Arayüzde önce sınıf ve ders seçimi yaparak PDF yükleyip **İndeks Oluştur
 - Sesli soru sorma ve gTTS ile sesli yanıt alma desteği eklenmiştir.
 - Kullanıcı adı ile giriş yapıldığında öğrenci puan kazanır, veliler puan tablosunu görüntüler.
 - Puanlar basit bir SQLite veritabanında saklanır.
-- Embedding modeli varsayılan olarak `paraphrase-multilingual-MiniLM-L12-v2` kullanır, `bert-base-turkish-cased` ile değiştirmek mümkündür.
+- Embedding modeli varsayılan olarak `emrecan/bert-base-turkish-cased-uncased-nli-stsb-tr` kullanılır, `paraphrase-multilingual-MiniLM-L12-v2` gibi alternatifler denenebilir.
