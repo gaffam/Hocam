@@ -6,3 +6,7 @@ transformers
 torch
 gTTS
 openai-whisper
+annoy
+scann
+
+

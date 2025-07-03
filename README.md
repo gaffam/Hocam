@@ -8,7 +8,12 @@ Bu proje, PDF dosyalarından Türkçe metin çıkararak FAISS vektör veritaban�
 pip install -r requirements.txt
 ```
 
+
+Python 3.8+ gereklidir. `faiss-cpu` varsayılan arama kütüphanesidir, `annoy` ve `scann` paketleri alternatif olarak `requirements.txt` içinde yer alır.
+Tüm bağımlılıklar kurulduktan sonra ilk çalıştırmada gerekli modeller Hugging Face üzerinden indirilerek `~/.cache/huggingface` klasörüne kaydedilir. Bu indirme işlemini önceden yapmak isterseniz aşağıdaki komutu çalıştırabilirsiniz:
+
 Python 3.8+ gereklidir. Tüm bağımlılıklar kurulduktan sonra ilk çalıştırmada gerekli modeller Hugging Face üzerinden indirilerek `~/.cache/huggingface` klasörüne kaydedilir. Bu indirme işlemini ilk çalıştırmadan önce yapmak isterseniz aşağıdaki komutu çalıştırabilirsiniz:
+main
 
 ```bash
 python - <<'PY'
@@ -17,6 +22,9 @@ for model in [
     "dbmdz/gpt2-turkish",
     "AI4Turk/ke-t5-small-tr",
     "cahya/gpt2-small-turkish",
+
+    "emrecan/bert-base-turkish-cased-uncased-nli-stsb-tr",
+  main
     "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
 ]:
     AutoTokenizer.from_pretrained(model)
@@ -51,4 +59,9 @@ Arayüzde önce sınıf ve ders seçimi yaparak PDF yükleyip **İndeks Oluştur
 - Sesli soru sorma ve gTTS ile sesli yanıt alma desteği eklenmiştir.
 - Kullanıcı adı ile giriş yapıldığında öğrenci puan kazanır, veliler puan tablosunu görüntüler.
 - Puanlar basit bir SQLite veritabanında saklanır.
+qa
+- Embedding modeli varsayılan olarak `emrecan/bert-base-turkish-cased-uncased-nli-stsb-tr` kullanılır, `paraphrase-multilingual-MiniLM-L12-v2` gibi alternatifler denenebilir.
+- Vektör arama için FAISS kullanılır; `SEARCH_BACKEND` ortam değişkeni `annoy` veya `scann` olarak ayarlanarak alternatif kütüphaneler denenebilir.
+
 - Embedding modeli varsayılan olarak `paraphrase-multilingual-MiniLM-L12-v2` kullanır, `bert-base-turkish-cased` ile değiştirmek mümkündür.
+
